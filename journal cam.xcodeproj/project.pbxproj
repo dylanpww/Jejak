@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6C4CCD0D2FD55CDE00205CA6 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 6C4CCD0C2FD55CDE00205CA6 /* FirebaseFirestore */; };
+		6CE424BC2FD40C1700D6ED2C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 6CE424BB2FD40C1700D6ED2C /* FirebaseAuth */; };
+		6CE424BE2FD40C1700D6ED2C /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 6CE424BD2FD40C1700D6ED2C /* FirebaseCore */; };
+		6CE424C02FD40C1700D6ED2C /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 6CE424BF2FD40C1700D6ED2C /* FirebaseDatabase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		6CE424AC2FD40AC900D6ED2C /* journal cam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "journal cam.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,16 +30,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6CE424C02FD40C1700D6ED2C /* FirebaseDatabase in Frameworks */,
+				6C4CCD0D2FD55CDE00205CA6 /* FirebaseFirestore in Frameworks */,
+				6CE424BE2FD40C1700D6ED2C /* FirebaseCore in Frameworks */,
+				6CE424BC2FD40C1700D6ED2C /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6C4CCD0B2FD55CDE00205CA6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		6CE424A32FD40AC900D6ED2C = {
 			isa = PBXGroup;
 			children = (
 				6CE424AE2FD40AC900D6ED2C /* journal cam */,
+				6C4CCD0B2FD55CDE00205CA6 /* Frameworks */,
 				6CE424AD2FD40AC900D6ED2C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -65,6 +84,10 @@
 			);
 			name = "journal cam";
 			packageProductDependencies = (
+				6CE424BB2FD40C1700D6ED2C /* FirebaseAuth */,
+				6CE424BD2FD40C1700D6ED2C /* FirebaseCore */,
+				6CE424BF2FD40C1700D6ED2C /* FirebaseDatabase */,
+				6C4CCD0C2FD55CDE00205CA6 /* FirebaseFirestore */,
 			);
 			productName = "journal cam";
 			productReference = 6CE424AC2FD40AC900D6ED2C /* journal cam.app */;
@@ -94,6 +117,9 @@
 			);
 			mainGroup = 6CE424A32FD40AC900D6ED2C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6CE424BA2FD40C1700D6ED2C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6CE424AD2FD40AC900D6ED2C /* Products */;
 			projectDirPath = "";
@@ -251,19 +277,22 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2M8NM4JZ9C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to take your journal selfie\n\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "dylan.journal-cam";
+				PRODUCT_BUNDLE_IDENTIFIER = dylan.JournalCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -282,19 +311,22 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2M8NM4JZ9C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to take your journal selfie\n\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "dylan.journal-cam";
+				PRODUCT_BUNDLE_IDENTIFIER = dylan.JournalCam;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -328,6 +360,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6CE424BA2FD40C1700D6ED2C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.14.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6C4CCD0C2FD55CDE00205CA6 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6CE424BA2FD40C1700D6ED2C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		6CE424BB2FD40C1700D6ED2C /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6CE424BA2FD40C1700D6ED2C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		6CE424BD2FD40C1700D6ED2C /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6CE424BA2FD40C1700D6ED2C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		6CE424BF2FD40C1700D6ED2C /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6CE424BA2FD40C1700D6ED2C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6CE424A42FD40AC900D6ED2C /* Project object */;
 }
