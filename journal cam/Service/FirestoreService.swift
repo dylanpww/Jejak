@@ -13,11 +13,12 @@ class FirestoreService {
     private let db = Firestore.firestore()
     private let cloudinary = CloudinaryService()
 
-    func saveEntry(image: UIImage, note: String, userId: String) async throws {
+    func saveEntry(image: UIImage,title: String, note: String, userId: String) async throws {
         let photoURL = try await cloudinary.uploadPhoto(image)
 
         let entry = JournalEntry(
             userId: userId,
+            title: title,
             note: note,
             photoURL: photoURL,
             createdAt: Date()

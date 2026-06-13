@@ -2,62 +2,92 @@
 //  JournalListView.swift
 //  journal cam
 //
-//  Created by Selena Cheryl Willyam on 07/06/26.
+//  Created by Dylan on 07/06/26.
 //
 
 
 import SwiftUI
+import PhotosUI
 
 struct JournalListView: View {
     let userId: String
-    @State private var entries: [JournalEntry] = []
+
+    @State private var viewModel = JournalViewModel()
     @State private var showCamera = false
-    @State private var isLoading = false
-    private let firestoreService = FirestoreService()
+    @State private var showPhotosPicker = false
+    @State private var selectedItem: PhotosPickerItem?
+    @State private var pickedImage: UIImage?
+    @State private var showEntryFromPicker = false
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if isLoading {
-                    ProgressView()
-                } else if entries.isEmpty {
-                    ContentUnavailableView(
-                        "No entries yet",
-                        systemImage: "camera.fill",
-                        description: Text("Tap + to add your first journal entry")
-                    )
-                } else {
-                    List(entries) { entry in
-                        NavigationLink(destination: EntryDetailView(entry: entry)) {
-                            EntryRowView(entry: entry)
+        ZStack{
+            Color(.gray.opacity(0.3))
+                .ignoresSafeArea()
+            NavigationStack {
+                Group {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    } else if viewModel.entries.isEmpty {
+                        ContentUnavailableView(
+                            "No entries yet",
+                            systemImage: "camera.fill",
+                            description: Text("Tap + to add your first journal entry")
+                        )
+                    } else {
+                        List(viewModel.entries) { entry in
+                            NavigationLink(destination: EntryDetailView(entry: entry)) {
+                                EntryRowView(entry: entry)
+                            }
+                        }
+                        .listStyle(.plain)
+                    }
+                }
+                .navigationTitle("Jejak")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Button {
+                                showCamera = true
+                            } label: {
+                                Label("Take Selfie", systemImage: "camera")
+                            }
+                            
+                            Button {
+                                showPhotosPicker = true
+                            } label: {
+                                Label("Upload from Library", systemImage: "photo")
+                            }
+                        } label: {
+                            Image(systemName: "plus")
                         }
                     }
-                    .listStyle(.plain)
                 }
-            }
-            .navigationTitle("Journal Cam")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showCamera = true
-                    } label: {
-                        Image(systemName: "plus")
+                .photosPicker(isPresented: $showPhotosPicker, selection: $selectedItem, matching: .images)
+                .fullScreenCover(isPresented: $showCamera) {
+                    CameraView(userId: userId) {
+                        Task { await viewModel.loadEntries(userId: userId) }
+                    }
+                }
+                .fullScreenCover(isPresented: $showEntryFromPicker) {
+                    if let image = pickedImage {
+                        JournalEntryView(image: image, userId: userId) {
+                            Task { await viewModel.loadEntries(userId: userId) }
+                        }
+                    }
+                }
+                .onChange(of: selectedItem) { _, newItem in
+                    Task {
+                        if let data = try? await newItem?.loadTransferable(type: Data.self),
+                           let image = UIImage(data: data) {
+                            pickedImage = image
+                            showEntryFromPicker = true
+                            selectedItem = nil
+                        }
                     }
                 }
             }
-            .fullScreenCover(isPresented: $showCamera) {
-                CameraView(userId: userId) {
-                    Task { await loadEntries() }
-                }
-            }
-            .task { await loadEntries() }
+            .task { await viewModel.loadEntries(userId: userId) }
         }
-    }
-
-    private func loadEntries() async {
-        isLoading = true
-        entries = (try? await firestoreService.fetchEntries(userId: userId)) ?? []
-        isLoading = false
     }
 }
 
@@ -75,8 +105,9 @@ struct EntryRowView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(entry.note.isEmpty ? "No note" : entry.note)
-                    .lineLimit(2)
+                Text(entry.title.isEmpty ? "Untitled" : entry.title)
+                    .font(.headline)
+                    .lineLimit(1)
                 Text(entry.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption)
                     .foregroundStyle(.secondary)

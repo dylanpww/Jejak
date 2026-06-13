@@ -12,143 +12,81 @@ struct CameraView: View {
     let userId: String
     let onSaved: () -> Void
 
-    @State private var cameraService = CameraService()
-    @State private var note = ""
-    @State private var isSaving = false
-    @State private var errorMessage: String?
+    @State private var viewModel = CameraViewModel()
+    @State private var showEntryView = false
     @Environment(\.dismiss) private var dismiss
-    private let firestoreService = FirestoreService()
 
     var body: some View {
         ZStack {
-                if let captured = cameraService.capturedImage {
-                    previewView(image: captured)
-                } else {
-                    liveCamera
-                }
+            Color.black.ignoresSafeArea()
+            liveCamera
+        }
+        .task { await viewModel.startCamera() }
+        .onDisappear { viewModel.stopCamera() }
+        .fullScreenCover(isPresented: $showEntryView) {
+            if let image = viewModel.capturedImage {
+                JournalEntryView(image: image, userId: userId, onSaved: {
+                    onSaved()
+                    dismiss()
+                })
             }
-            .task {
-                await cameraService.start()
+        }
+        .onChange(of: viewModel.capturedImage) { _, newImage in
+            if newImage != nil {
+                showEntryView = true
             }
-            .onDisappear {
-                cameraService.stop()
-            }
+        }
     }
 
     private var liveCamera: some View {
-        ZStack(alignment: .bottom) {
-            CameraPreview(service: cameraService)
-                .ignoresSafeArea()
-
-            VStack {
-                HStack {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                            .foregroundStyle(.white)
-                            .padding(12)
-                            .background(.black.opacity(0.4))
-                            .clipShape(Circle())
-                    }
-                    Spacer()
+        VStack(spacing: 0) {
+            HStack {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark")
+                        .font(.title2)
+                        .foregroundStyle(.white)
+                        .padding(12)
+                        .background(.black.opacity(0.5))
+                        .clipShape(Circle())
                 }
-                .padding()
                 Spacer()
-
-                if cameraService.isSessionReady {
-                                Button {
-                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                    cameraService.capture()
-                                } label: {
-                                    Circle()
-                                        .fill(.white)
-                                        .frame(width: 72, height: 72)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(.white.opacity(0.4), lineWidth: 4)
-                                                .frame(width: 84, height: 84)
-                                        )
-                                }
-                                .padding(.bottom, 48)
-                            } else {
-                                ProgressView()
-                                    .tint(.white)
-                                    .padding(.bottom, 48)
-                            }
             }
-        }
-    }
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
 
-    private func previewView(image: UIImage) -> some View {
-        ZStack(alignment: .bottom) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+            Spacer()
 
-            VStack(spacing: 16) {
-                if let error = errorMessage {
-                    Text(error)
-                        .foregroundStyle(.red)
-                        .font(.caption)
-                        .padding(.horizontal)
-                }
-
-                TextField("Add a note...", text: $note, axis: .vertical)
-                    .padding()
-                    .background(.ultraThinMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal)
-
-                HStack(spacing: 16) {
-                    Button {
-                        cameraService.capturedImage = nil
-                    } label: {
-                        Text("Retake")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(.ultraThinMaterial)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-
-                    Button {
-                        Task { await save(image: image) }
-                    } label: {
-                        Group {
-                            if isSaving {
-                                ProgressView()
-                            } else {
-                                Text("Save")
-                                    .font(.headline)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(.white)
-                        .foregroundStyle(.black)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-                    .disabled(isSaving)
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 48)
+            GeometryReader { geo in
+                CameraPreview(previewLayer: viewModel.previewLayer)
+                    .frame(width: geo.size.width, height: geo.size.width * 4 / 3)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
             }
-        }
-    }
+            .frame(height: UIScreen.main.bounds.width * 4 / 3)
+            .padding(.horizontal, 16)
 
-    private func save(image: UIImage) async {
-        isSaving = true
-        errorMessage = nil
-        do {
-            try await firestoreService.saveEntry(image: image, note: note, userId: userId)
-            onSaved()
-            dismiss()
-        } catch {
-            errorMessage = error.localizedDescription
+            Spacer()
+
+            if viewModel.isSessionReady {
+                Button {
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    viewModel.capture()
+                } label: {
+                    ZStack {
+                        Circle()
+                            .stroke(.white.opacity(0.5), lineWidth: 4)
+                            .frame(width: 84, height: 84)
+                        Circle()
+                            .fill(.white)
+                            .frame(width: 72, height: 72)
+                    }
+                }
+            } else {
+                ProgressView()
+                    .tint(.white)
+                    .scaleEffect(1.5)
+            }
+
+            Spacer()
         }
-        isSaving = false
     }
 }

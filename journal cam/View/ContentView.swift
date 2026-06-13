@@ -14,14 +14,13 @@ struct ContentView: View {
     var body: some View {
         Group {
             if let user = authService.user {
-                JournalListView(userId: user.uid)
+                MainTabView(userId: user.uid, authService: authService)
             } else {
                 LoginView(authService: authService)
             }
         }
     }
 }
-
 #Preview {
     ContentView()
 }

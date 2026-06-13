@@ -12,90 +12,120 @@ struct LoginView: View {
 
     @State private var email = ""
     @State private var password = ""
-    @State private var isLogin = true
     @State private var isLoading = false
     @State private var errorMessage: String?
 
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
+        NavigationStack {
+            ZStack {
+                Color(.systemBackground)
+                    .ignoresSafeArea()
 
-            Image(systemName: "camera.fill")
-                .font(.system(size: 64))
-                .foregroundStyle(.primary)
+                VStack(spacing: 0) {
+                    // Header
+                    VStack(spacing: 12) {
+                        Image(systemName: "camera.fill")
+                            .font(.system(size: 56))
+                            .foregroundStyle(.primary)
 
-            Text("Journal Cam")
-                .font(.largeTitle.bold())
+                        Text("Journal Cam")
+                            .font(.largeTitle.bold())
+                            .foregroundStyle(.primary)
 
-            Text(isLogin ? "Welcome back" : "Create your account")
-                .foregroundStyle(.secondary)
-
-            Spacer()
-
-            VStack(spacing: 12) {
-                TextField("Email", text: $email)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                SecureField("Password", text: $password)
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            .padding(.horizontal)
-
-            if let error = errorMessage {
-                Text(error)
-                    .foregroundStyle(.red)
-                    .font(.caption)
-                    .padding(.horizontal)
-                    .multilineTextAlignment(.center)
-            }
-
-            Button {
-                Task { await submit() }
-            } label: {
-                Group {
-                    if isLoading {
-                        ProgressView()
-                    } else {
-                        Text(isLogin ? "Sign In" : "Sign Up")
-                            .font(.headline)
+                        Text("Your daily selfie journal")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                     }
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(.primary)
-                .foregroundStyle(.background)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-            }
-            .disabled(isLoading || email.isEmpty || password.isEmpty)
-            .padding(.horizontal)
+                    .padding(.top, 80)
+                    .padding(.bottom, 48)
 
-            Button {
-                isLogin.toggle()
-                errorMessage = nil
-            } label: {
-                Text(isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    // Form
+                    VStack(spacing: 16) {
+                        VStack(spacing: 12) {
+                            HStack {
+                                Image(systemName: "envelope")
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 20)
+                                TextField("Email", text: $email)
+                                    .keyboardType(.emailAddress)
+                                    .autocapitalization(.none)
+                                    .autocorrectionDisabled()
+                                    .foregroundStyle(.primary)
+                            }
+                            .padding()
+                            .background(Color(.tertiarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                            HStack {
+                                Image(systemName: "lock")
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 20)
+                                SecureField("Password", text: $password)
+                                    .foregroundStyle(.primary)
+                            }
+                            .padding()
+                            .background(Color(.tertiarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .padding(.horizontal, 24)
+
+                        if let error = errorMessage {
+                            Text(error)
+                                .foregroundStyle(.red)
+                                .font(.caption)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 24)
+                        }
+
+                        Button {
+                            Task { await signIn() }
+                        } label: {
+                            Group {
+                                if isLoading {
+                                    ProgressView().tint(.white)
+                                } else {
+                                    Text("Sign In")
+                                        .font(.headline)
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                email.isEmpty || password.isEmpty
+                                ? Color(.systemGray3)
+                                : Color.accentColor
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                        .disabled(isLoading || email.isEmpty || password.isEmpty)
+                        .padding(.horizontal, 24)
+                    }
+
+                    Spacer()
+
+                    NavigationLink(destination: RegisterView(authService: authService)) {
+                        HStack(spacing: 4) {
+                            Text("Don't have an account?")
+                                .foregroundStyle(.secondary)
+                            Text("Sign Up")
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.blue)
+                        }
+                        .font(.subheadline)
+                    }
+                    .padding(.bottom, 32)
+                }
             }
-            .padding(.bottom, 32)
+            .navigationBarHidden(true)
         }
     }
 
-    private func submit() async {
+    private func signIn() async {
         isLoading = true
         errorMessage = nil
         do {
-            if isLogin {
-                try await authService.signIn(email: email, password: password)
-            } else {
-                try await authService.signUp(email: email, password: password)
-            }
+            try await authService.signIn(email: email, password: password)
         } catch {
             errorMessage = error.localizedDescription
         }

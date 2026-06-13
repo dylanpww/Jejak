@@ -12,6 +12,7 @@ import Foundation
 struct JournalEntry: Identifiable, Codable {
     @DocumentID var id: String?
     let userId: String
+    var title: String
     var note: String
     var photoURL: String
     let createdAt: Date
