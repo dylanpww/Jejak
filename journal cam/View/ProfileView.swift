@@ -14,33 +14,47 @@ struct ProfileView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    HStack(spacing: 16) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 56))
-                            .foregroundStyle(.secondary)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(authService.user?.email ?? "Anonymous")
-                                .font(.headline)
-                            Text("Journal Cam member")
-                                .font(.caption)
+            ZStack{
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.04, green: 0.08, blue: 0.18),
+                        Color(red: 0.10, green: 0.16, blue: 0.32)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
+                List {
+                    Section {
+                        HStack(spacing: 16) {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 56))
                                 .foregroundStyle(.secondary)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(authService.user?.email ?? "Anonymous")
+                                    .font(.headline)
+                                Text("Journal Cam member")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
+                        .padding(.vertical, 8)
                     }
-                    .padding(.vertical, 8)
-                }
-
-                Section("Account") {
-                    Button(role: .destructive) {
-                        try? authService.signOut()
-                    } label: {
-                        Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                    
+                    Section("Account") {
+                        Button(role: .destructive) {
+                            try? authService.signOut()
+                        } label: {
+                            Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
+                        }
+                        
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .navigationTitle("Profile")
             }
-            .navigationTitle("Profile")
         }
     }
 }

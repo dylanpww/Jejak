@@ -44,4 +44,24 @@ class JournalViewModel {
         }
         isLoading = false
     }
+    
+    func deleteEntry(_ entry: JournalEntry, userId: String) async {
+        guard let entryId = entry.id else { return }
+        do {
+            try await firestoreService.deleteEntry(entryId: entryId, userId: userId)
+            await loadEntries(userId: userId)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func updateEntry(_ entry: JournalEntry, title: String, note: String, userId: String) async {
+        guard let entryId = entry.id else { return }
+        do {
+            try await firestoreService.updateEntry(entryId: entryId, userId: userId, title: title, note: note)
+            await loadEntries(userId: userId)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
 }

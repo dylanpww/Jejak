@@ -18,13 +18,18 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemBackground)
-                    .ignoresSafeArea()
-
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.04, green: 0.08, blue: 0.18),
+                        Color(red: 0.10, green: 0.16, blue: 0.32)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
                 VStack(spacing: 0) {
-                    // Header
                     VStack(spacing: 12) {
-                        Image(systemName: "camera.fill")
+                        Image("logo")
                             .font(.system(size: 56))
                             .foregroundStyle(.primary)
 
@@ -39,7 +44,6 @@ struct LoginView: View {
                     .padding(.top, 80)
                     .padding(.bottom, 48)
 
-                    // Form
                     VStack(spacing: 16) {
                         VStack(spacing: 12) {
                             HStack {

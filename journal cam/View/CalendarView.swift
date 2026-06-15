@@ -19,25 +19,35 @@ struct CalendarView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                monthHeader
-
-                weekdayHeader
-
-                calendarGrid
-
-                Divider()
-                    .padding(.top, 8)
-
-                entriesForSelectedDate
+            ZStack{
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.04, green: 0.08, blue: 0.18),
+                        Color(red: 0.10, green: 0.16, blue: 0.32)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                
+                VStack(spacing: 16) {
+                    monthHeader
+                    
+                    weekdayHeader
+                    
+                    calendarGrid
+                    
+                    Divider()
+                        .padding(.top, 8)
+                    
+                    entriesForSelectedDate
+                }
+                .padding(.horizontal)
+                .navigationTitle("Calendar")
+                .task { await viewModel.loadEntries(userId: userId) }
             }
-            .padding(.horizontal)
-            .navigationTitle("Calendar")
-            .task { await viewModel.loadEntries(userId: userId) }
         }
     }
-
-    // MARK: - Month Header
     private var monthHeader: some View {
         HStack {
             Button {
@@ -62,7 +72,6 @@ struct CalendarView: View {
         .padding(.top, 8)
     }
 
-    // MARK: - Weekday Header
     private var weekdayHeader: some View {
         HStack {
             ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
@@ -74,7 +83,6 @@ struct CalendarView: View {
         }
     }
 
-    // MARK: - Calendar Grid
     private var calendarGrid: some View {
         let days = daysInMonth()
 
@@ -117,7 +125,6 @@ struct CalendarView: View {
         }
     }
 
-    // MARK: - Entries for selected date
     private var entriesForSelectedDate: some View {
         let dayEntries = entries(on: selectedDate)
 
@@ -131,16 +138,19 @@ struct CalendarView: View {
                 .frame(maxHeight: .infinity)
             } else {
                 List(dayEntries) { entry in
-                    NavigationLink(destination: EntryDetailView(entry: entry)) {
+                    NavigationLink(destination: EntryDetailView(entry: entry, userId: userId, onDeleted: {
+                        Task { await viewModel.loadEntries(userId: userId) }
+                    })) {
                         EntryRowView(entry: entry)
                     }
+                    .listRowBackground(Color.clear)
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
         }
     }
 
-    // MARK: - Helpers
     private func entries(on date: Date) -> [JournalEntry] {
         viewModel.entries.filter {
             calendar.isDate($0.createdAt, inSameDayAs: date)

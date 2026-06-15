@@ -18,7 +18,16 @@ struct CameraView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            LinearGradient(
+                colors: [
+                    Color(red: 0.04, green: 0.08, blue: 0.18),
+                    Color(red: 0.10, green: 0.16, blue: 0.32)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
             liveCamera
         }
         .task { await viewModel.startCamera() }

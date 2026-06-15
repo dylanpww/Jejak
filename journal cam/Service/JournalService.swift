@@ -41,4 +41,21 @@ class FirestoreService {
             try? $0.data(as: JournalEntry.self)
         }
     }
+    func deleteEntry(entryId: String, userId: String) async throws {
+        try await db.collection("users")
+            .document(userId)
+            .collection("entries")
+            .document(entryId)
+            .delete()
+    }
+    func updateEntry(entryId: String, userId: String, title: String, note: String) async throws {
+        try await db.collection("users")
+            .document(userId)
+            .collection("entries")
+            .document(entryId)
+            .updateData([
+                "title": title,
+                "note": note
+            ])
+    }
 }

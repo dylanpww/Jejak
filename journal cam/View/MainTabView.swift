@@ -30,3 +30,7 @@ struct MainTabView: View {
         }
     }
 }
+
+#Preview {
+    MainTabView(userId: "test", authService: AuthService())
+}

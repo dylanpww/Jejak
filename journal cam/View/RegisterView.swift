@@ -25,7 +25,10 @@ struct RegisterView: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(.systemBackground), Color(.secondarySystemBackground)],
+                colors: [
+                    Color(red: 0.04, green: 0.08, blue: 0.18),
+                    Color(red: 0.10, green: 0.16, blue: 0.32)
+                ],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -33,7 +36,7 @@ struct RegisterView: View {
 
             VStack(spacing: 0) {
                 VStack(spacing: 12) {
-                    Image(systemName: "person.badge.plus")
+                    Image(systemName: "logo")
                         .font(.system(size: 56))
                         .foregroundStyle(.primary)
 
